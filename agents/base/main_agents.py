@@ -1,9 +1,13 @@
 from agno.agent import Agent
 from agno.models.ollama import Ollama
-from agents.tools.email_services.send_email import send_email
+from agents.tools.email_services.send_email import send_email as send_email_tool
 from agents.tools.email_services.read_emails import read_latest_emails
 
 import json
+import re
+from dotenv import load_dotenv
+
+load_dotenv()
 
 model = Ollama(
     id="qwen2.5:3b-instruct",
@@ -12,16 +16,22 @@ model = Ollama(
 
 agent = Agent(
     model=model,
-    tools=[send_email, read_latest_emails]
+    tools=[send_email_tool, read_latest_emails]
 )
 
 async def email_msg(message: str):
     result = agent.run(message)
     return result.content
 
-async def send_email_msg():
-    result = agent.run("send email to kartikmehra173@gmail.com with greeting and add subject of greeting.")
-    return result.content
+#Send single Quick Email to anyone Greeting message.
+async def send_emails(email: str):
+    result = agent.run(
+        f"send email to {email} with greeting and add subject of greeting. "
+        f"after send the message return me success json format like this {{'status': 'success'}}"
+        f"use tools send_email_tool to send the email."
+    )
+    jsonLoads = await json.loads(result.content)
+    return jsonLoads
 
 #Reading the Latest 5 emails and return in JSON format.
 async def read_email():

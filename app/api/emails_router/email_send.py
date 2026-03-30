@@ -1,5 +1,5 @@
-from fastapi import APIRouter
-from agents.base.main_agents import email_msg, send_email_msg, read_email, conversation_email
+from fastapi import APIRouter, Request
+from agents.base.main_agents import email_msg, send_emails, read_email, conversation_email
 
 router = APIRouter()
 
@@ -8,10 +8,18 @@ async def chat():
     result = await email_msg("hi")
     return {"message": result}
 
-@router.post("/send_email")
-async def send_email(email_data: dict):
-    result = await send_email_msg(email_data)
-    return {"message": result}
+@router.get("/send_email")
+async def send_email():
+    try:
+        # email_data = await request.json()
+        to_email = "kartikmehra173@gmail.com" #email_data["send_mail_to"]
+        # name = email_data.get("name")
+
+        result = await send_emails(to_email)
+
+        return {"status": "success", "data": result}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @router.get("/read_emails")
 async def read_emails():
