@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
-from agents.base.main_agents import email_msg, send_emails, read_email, conversation_email
+from agents.base.main_agents import email_msg, send_emails, conversation_email
+from app.api.services.read_emails import read_latest_emails
 
 router = APIRouter()
 
@@ -20,11 +21,14 @@ async def send_email():
         return {"status": "success", "data": result}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+    
 
 @router.get("/read_emails")
 async def read_emails():
-    result = await read_email()
+    result = await read_latest_emails()
     return result
+
+
 
 @router.get("/email_reply")
 async def email_reply():

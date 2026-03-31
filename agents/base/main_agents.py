@@ -1,21 +1,14 @@
 from agno.agent import Agent
-from agno.models.ollama import Ollama
+
+from agents.main_agent import Gemini_model
 from agents.tools.email_services.send_email import send_email as send_email_tool
 from agents.tools.email_services.read_emails import read_latest_emails
 
 import json
 import re
-from dotenv import load_dotenv
-
-load_dotenv()
-
-model = Ollama(
-    id="qwen2.5:3b-instruct",
-    host="http://localhost:11434"
-)
 
 agent = Agent(
-    model=model,
+    model=Gemini_model,
     tools=[send_email_tool, read_latest_emails]
 )
 

@@ -3,7 +3,7 @@ import email
 from email.header import decode_header
 
 
-def read_latest_emails(limit: int = 5):
+async def read_latest_emails(limit: int = 5):
     """
     Reads latest emails from Gmail inbox.
 
