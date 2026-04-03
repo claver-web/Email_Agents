@@ -1,3 +1,4 @@
+from app.core.config import settings
 import imaplib
 import email
 from email.header import decode_header
@@ -14,8 +15,8 @@ def read_latest_emails(limit: int = 5):
         list[dict]: structured email data
     """
 
-    EMAIL = "pythonji7@gmail.com"
-    PASS = "oplwjjoqcvvyqsod"
+    EMAIL = settings.SENDER_EMAIL
+    PASS = settings.EMAIL_PASSWORD
 
     results = []
 

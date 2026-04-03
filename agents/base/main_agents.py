@@ -17,14 +17,9 @@ async def email_msg(message: str):
     return result.content
 
 #Send single Quick Email to anyone Greeting message.
-async def send_emails(email: str):
-    result = agent.run(
-        f"send email to {email} with greeting and add subject of greeting. "
-        f"after send the message return me success json format like this {{'status': 'success'}}"
-        f"use tools send_email_tool to send the email."
-    )
-    jsonLoads = await json.loads(result.content)
-    return jsonLoads
+async def send_emails(prompt: str):
+    result = agent.run(prompt)
+    return result.content
 
 #Reading the Latest 5 emails and return in JSON format.
 async def read_email():

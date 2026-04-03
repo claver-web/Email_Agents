@@ -9,14 +9,16 @@ async def chat():
     result = await email_msg("hi")
     return {"message": result}
 
-@router.get("/send_email")
-async def send_email():
+@router.post("/send_email")
+async def send_email(request: Request):
     try:
-        # email_data = await request.json()
-        to_email = "kartikmehra173@gmail.com" #email_data["send_mail_to"]
-        # name = email_data.get("name")
+        email_data = await request.json()
+        name = email_data.get("name")
+        email = email_data.get("send_mail_to")
 
-        result = await send_emails(to_email)
+        print(email_data, name, email)
+
+        result = await send_emails(f"you are an {name}. send email to {email} using tool. subject set as greeting and in body set the message")
 
         return {"status": "success", "data": result}
     except Exception as e:

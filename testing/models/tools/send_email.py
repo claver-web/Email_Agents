@@ -1,3 +1,4 @@
+from app.core.config import settings
 import smtplib
 import os
 from email.mime.text import MIMEText
@@ -8,8 +9,8 @@ def send_email(
     to_email: str,
     subject: str,
     body: str,
-    sender_email: str ="pythonji7@gmail.com",
-    app_password: str ="oplw jjoq cvvy qsod"
+    sender_email: str = settings.SENDER_EMAIL,
+    app_password: str = settings.EMAIL_PASSWORD
 ):
     """
     Send an email via Gmail SMTP.
