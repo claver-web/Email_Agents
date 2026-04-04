@@ -76,8 +76,8 @@ async def read_latest_emails(limit: int = 15):
     try:
         return await asyncio.wait_for(
             asyncio.to_thread(_read_latest_emails_sync, limit),
-            timeout=30.0  # 30 second timeout
+            timeout=60.0  # 60 second timeout
         )
     except asyncio.TimeoutError:
-        print("Email fetching timed out")
+        print("Email fetching timed out (took longer than 60s)")
         return []

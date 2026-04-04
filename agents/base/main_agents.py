@@ -17,7 +17,7 @@ async def email_msg(message: str):
     return result.content
 
 #Send single Quick Email to anyone Greeting message.
-async def send_emails(prompt: str):
+async def send_quick_emails(prompt: str):
     result = agent.run(prompt)
     return result.content
 
