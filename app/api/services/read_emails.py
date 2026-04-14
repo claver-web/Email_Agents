@@ -31,12 +31,26 @@ def _read_latest_emails_sync(limit: int = 15):
             for response in msg:
                 if isinstance(response, tuple):
                     msg_obj = email.message_from_bytes(response[1])
-                    subject, encoding = decode_header(msg_obj.get("Subject"))[0]
 
-                    if isinstance(subject, bytes):
-                        subject = subject.decode(encoding if encoding else "utf-8", errors="ignore")
+                    def _decode_header(header_val):
+                        if not header_val:
+                            return ""
+                        decoded_parts = decode_header(header_val)
+                        result = ""
+                        for part, encoding in decoded_parts:
+                            if isinstance(part, bytes):
+                                # Handle 'unknown-8bit' or missing encoding by falling back to latin-1
+                                enc = encoding if encoding and encoding.lower() != 'unknown-8bit' else 'latin-1'
+                                try:
+                                    result += part.decode(enc, errors="ignore")
+                                except (LookupError, UnicodeDecodeError):
+                                    result += part.decode("latin-1", errors="ignore")
+                            else:
+                                result += part
+                        return result
 
-                    from_ = msg_obj.get("From")
+                    subject = _decode_header(msg_obj.get("Subject"))
+                    from_ = _decode_header(msg_obj.get("From"))
                     body_text = ""
 
                     if msg_obj.is_multipart():
