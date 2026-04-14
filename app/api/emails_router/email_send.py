@@ -4,6 +4,7 @@ from agents.base.main_agents import send_quick_emails, conversation_email
 from app.api.services.read_emails import read_latest_emails
 from app.api.services.email_suggesions import emails_suggest_reply
 from app.api.services.send_emails import send_email as send_direct_email
+from app.api.services.ai_generation import generate_email_content
 
 router = APIRouter()
 
@@ -34,17 +35,23 @@ async def send_email_sug(request: Request):
         print(email_data)
         email = email_data.get("to")
         subject = email_data.get("subject")
-        body = email_data.get("body")
-
         print(email_data, email)
+        
+        # Extract optional authentication if provided by the Next.js bridge
+        auth_data = email_data.get("auth", {})
+        sender_email = auth_data.get("user")
+        sender_password = auth_data.get("pass")
 
-        # Using the AI agent to send since the current code passes a prompt string
-        result = await send_quick_emails(
-            f"you are an AI assesstent. send email to {email} using tool." 
-            f"subject set as {subject} and in body set the message {body}"
+        # Use direct SMTP sending for reliability
+        result = await send_direct_email(
+            email, 
+            subject, 
+            body, 
+            sender_email=sender_email, 
+            sender_password=sender_password
         )
 
-        return {"status": "success", "data": result}
+        return result
     except Exception as e:
         return {"status": "error", "message": str(e)}
     
@@ -55,8 +62,10 @@ async def read_emails():
     return result
 
 # Suggest the reply for the email
-@router.post("/emails_suggest_reply")
+@router.api_route("/emails_suggest_reply", methods=["GET", "POST"])
 async def suggest_reply_route(request: Request):
+    if request.method == "GET":
+        return {"status": "success", "message": "Email suggestion endpoint is active and waiting for POST data."}
     try:
         email_data = await request.json()
         email_content = email_data.get("emailContent")
@@ -72,3 +81,20 @@ async def suggest_reply_route(request: Request):
         return result
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+# Generate AI campaign content
+@router.post("/generate_campaign")
+async def generate_campaign_route(request: Request):
+    try:
+        data = await request.json()
+        prompt = data.get("prompt")
+        tone = data.get("tone", "professional")
+        
+        if not prompt:
+            return {"status": "error", "message": "Prompt is required"}
+            
+        result = await generate_email_content(prompt, tone)
+        return result
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+

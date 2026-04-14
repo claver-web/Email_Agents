@@ -14,8 +14,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(email_send.router, prefix="/api")
+app.include_router(email_send.router, prefix="/agents")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)

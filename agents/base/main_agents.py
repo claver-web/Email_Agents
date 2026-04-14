@@ -13,12 +13,12 @@ agent = Agent(
 )
 
 async def email_msg(message: str):
-    result = agent.run(message)
+    result = await agent.arun(message)
     return result.content
 
 #Send single Quick Email to anyone Greeting message.
 async def send_quick_emails(prompt: str):
-    result = agent.run(prompt)
+    result = await agent.arun(prompt)
     return result.content
 
 #Reading the Latest 5 emails and return in JSON format.
@@ -48,7 +48,7 @@ async def read_email():
         }
     """
 
-    result = agent.run(prompt)
+    result = await agent.arun(prompt)
     raw = result.content
 
     try:
@@ -69,5 +69,5 @@ async def read_email():
             return {"error": "Still invalid JSON", "raw": raw}
 
 async def conversation_email():
-    result = agent.run("send emailto partner kartikmehra173@gmail.com with greeting, andadd subject of greeting. and start the professional conversation like human. read the email context. then baises of the context replt back.")
+    result = await agent.arun("send emailto partner kartikmehra173@gmail.com with greeting, andadd subject of greeting. and start the professional conversation like human. read the email context. then baises of the context replt back.")
     return result.content
